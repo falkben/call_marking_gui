@@ -636,11 +636,15 @@ end
 if ~isempty(idx_end)
     call_idx(2) = idx_end;
 else
-    call_idx(2) = length(sm_log)-100;
+    call_idx(2) = length(sm_log);
 end
 
-sig = sig(call_idx(1):call_idx(2));
-e = smooth(sig.^2,round(length(sig)/4));
+sig_sub = sig(call_idx(1):call_idx(2));
+try
+  e = smooth(sig_sub.^2,round(length(sig_sub)/4));
+catch
+  e=sm;
+end
 [me,midx] = max(e);
 tmp = find(e(midx:end)<me*0.001,1,'first');
 if ~isempty(tmp)

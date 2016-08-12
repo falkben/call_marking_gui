@@ -25,7 +25,7 @@ function varargout = call_detection_gui(varargin)
 % Wu-Jung Lee | leewujung@gmail.com
 
 
-% Last Modified by GUIDE v2.5 03-Jul-2016 18:28:29
+% Last Modified by GUIDE v2.5 12-Aug-2016 17:43:16
 
 
 % Begin initialization code - DO NOT EDIT
@@ -935,3 +935,11 @@ hh = getappdata(0,'handles_op');
 plot_spectrogram(hh);
 
 % Hint: get(hObject,'Value') returns toggle state of checkbox_mark
+
+
+% --- Executes on button press in reset_zoom_button.
+function reset_zoom_button_Callback(hObject, eventdata, handles)
+% hObject    handle to reset_zoom_button (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+plot_spectrogram(handles,1);

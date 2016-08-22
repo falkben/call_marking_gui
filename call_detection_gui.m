@@ -834,7 +834,8 @@ end
 
 if track_loaded_flag==0  % need to load track file
     % Set path and filename for bat track
-    if ispref('call_detection_gui') && ispref('call_detection_gui','bat_track_path')
+    if ispref('call_detection_gui') && ispref('call_detection_gui','bat_track_path')...
+        && ~isequal(getpref('call_detection_gui','bat_track_path'),0)
         track.pname = getpref('call_detection_gui','bat_track_path');
     else
 %         track.pname = getpref('call_detection_gui','sig_path');
@@ -851,17 +852,27 @@ if track_loaded_flag==0  % need to load track file
 else
     track = data.track;
 end
-track.fs = str2double(get(hh.edit_video_fps,'String'));  % frame rate for video [Hz]
 
 % Find start and end track frame idx
 if ~exist(fullfile(track.pname,track.fname),'file')
     [track.fname,track.pname] = uigetfile(fullfile(track.pname,'*.mat'),'Select matching bat position file');
+    if isequal(track.pname,0)
+        return;
+    end
     setpref('call_detection_gui','bat_track_path',track.pname);
 end
 bat = load(fullfile(track.pname,track.fname));
 
-track.time(1) = find(isfinite(bat.bat_pos{1}(:,1)),1)/track.fs;
-track.time(2) = find(isfinite(bat.bat_pos{1}(:,1)),1,'last')/track.fs;
+track.fs = bat.frame_rate;
+set(hh.edit_video_fps,'String',num2str(track.fs));
+
+if isfield(bat,'startframe') && isfield(bat,'endframe')
+  track.time(1) = bat.startframe/track.fs;
+  track.time(2) = bat.endframe/track.fs;
+else
+  track.time(1) = find(isfinite(bat.bat_pos{1}(:,1)),1)/track.fs;
+  track.time(2) = find(isfinite(bat.bat_pos{1}(:,1)),1,'last')/track.fs;
+end
 
 % Draw boundary on spectrogram
 axes(hh.axes_spectrogram);
